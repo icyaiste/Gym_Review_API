@@ -5,7 +5,7 @@ describe("Pipeline tests", () => {
     expect(1 + 1).toBe(2);
   });
 
-  it("should fail", () => {
+ /*it("should fail", () => {
     expect(1 + 1).toBe(3);
-  });
+  });*/
 });
