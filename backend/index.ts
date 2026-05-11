@@ -37,33 +37,64 @@ app.get('/logout', (req, res) => {
 })
 
 app.get('/gyms', (req, res) => {
-  app.post('/gyms/:id/reviews', (req, res) => {
-    try {
-      console.log('POST /gyms/:id/reviews hit, id:', req.params.id);
-      console.log('Request body:', req.body);
-      const gymId = req.params.id
-      const { author, rating, comment } = req.body
-      const gym = gymsData.find(gym => gym.id === gymId)
+  try {
+    res.json(gymsData)
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching gyms' })
+  }
+})
 
-      if (gym) {
-        const newReview = {
-          id: `r-${gymId.slice(4)}-${gym.reviews.length + 1}`,
-          author,
-          rating,
-          comment,
-          createdAt: new Date().toISOString().slice(0, 10)
-        }
-        gym.reviews.push(newReview)
-        res.status(201).json(newReview)
-      } else {
-        res.status(404).json({ message: 'Gym not found' })
-      }
-    } catch (error) {
-      res.status(500).json({ message: 'Error adding review' })
+// Profile endpoint - requires authentication
+app.get('/profile', (req, res) => {
+  if (req.oidc.isAuthenticated()) {
+    res.json(req.oidc.user)
+  } else {
+    res.status(401).json({ message: 'Unauthorized' })
+  }
+})
+
+app.get('/gyms/:id', (req, res) => {
+  try {
+    console.log('GET /gyms/:id hit, id:', req.params.id);
+    console.log('Gyms data length:', gymsData.length);
+    const gymId = req.params.id
+    const gym = gymsData.find(gym => gym.id === gymId)
+    if (gym) {
+      res.json(gym)
+    } else {
+      res.status(404).json({ message: 'Gym not found' })
     }
-  })
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching gym' })
+  }
+})
 
-  app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`)
-  })
+app.post('/gyms/:id/reviews', (req, res) => {
+  try {
+    console.log('POST /gyms/:id/reviews hit, id:', req.params.id);
+    console.log('Request body:', req.body);
+    const gymId = req.params.id
+    const { author, rating, comment } = req.body
+    const gym = gymsData.find(gym => gym.id === gymId)
+
+    if (gym) {
+      const newReview = {
+        id: `r-${gymId.slice(4)}-${gym.reviews.length + 1}`,
+        author,
+        rating,
+        comment,
+        createdAt: new Date().toISOString().slice(0, 10)
+      }
+      gym.reviews.push(newReview)
+      res.status(201).json(newReview)
+    } else {
+      res.status(404).json({ message: 'Gym not found' })
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding review' })
+  }
+})
+
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`)
 })
