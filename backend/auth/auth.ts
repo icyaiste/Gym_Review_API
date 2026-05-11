@@ -6,15 +6,19 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 const clientCallbackUrl =
   process.env.AUTH0_REDIRECT_URI || "http://localhost:5173/callback";
+const sessionSecret =
+  process.env.AUTH0_SECRET ||
+  process.env.SECRET;
+
+if (!sessionSecret) {
+  throw new Error("Missing AUTH0_SECRET (or SECRET) environment variable");
+}
 
 const config = {
   authRequired: false,
   auth0Logout: false,
   idpLogout: false,
-  secret:
-    process.env.AUTH0_SECRET ||
-    process.env.SECRET ||
-    "dev-auth0-secret-change-me-dev-auth0-secret-change-me",
+  secret: sessionSecret,
   baseURL: process.env.AUTH0_BASE_URL || `http://localhost:${port}`,
   clientID: process.env.AUTH0_CLIENT_ID,
   clientSecret: process.env.AUTH0_CLIENT_SECRET,
