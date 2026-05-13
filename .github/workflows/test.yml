@@ -29,3 +29,7 @@ jobs:
       - name: Run tests
         run: npm test
         working-directory: ./backend
+        env:
+          AUTH0_SECRET: ${{ secrets.SECRET }}
+          AUTH0_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          AUTH0_ISSUER_BASE_URL: ${{ secrets.ISSUER }}
