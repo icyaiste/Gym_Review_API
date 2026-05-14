@@ -4,8 +4,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const port = process.env.PORT || 3000;
-const clientCallbackUrl =
-  process.env.AUTH0_REDIRECT_URI || "http://localhost:5173/callback";
 const sessionSecret =
   process.env.AUTH0_SECRET ||
   process.env.SECRET;
@@ -26,6 +24,7 @@ const config = {
     process.env.AUTH0_ISSUER_BASE_URL ||
     (process.env.AUTH0_DOMAIN ? `https://${process.env.AUTH0_DOMAIN}` : undefined),
   routes: {
+    login: false as const,
     callback: "/callback",
     logout: false as const,
   },
