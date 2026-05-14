@@ -49,7 +49,43 @@ const Home = () => {
     fetchGyms()
   }, [backendUrl])
 
-  if (loading) return <p>Loading gyms...</p>
+  if (loading) return (
+  <div style={{ padding: '20px' }}>
+    <h1>Gym Reviews</h1>
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+      gap: '20px'
+    }}>
+      {[1, 2, 3].map((n) => (
+        <div key={n} style={{
+          border: '1px solid #ddd',
+          borderRadius: '8px',
+          overflow: 'hidden',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+        }}>
+          <div style={{
+            width: '100%', height: '200px',
+            backgroundColor: '#eee',
+            animation: 'pulse 1.5s ease-in-out infinite'
+          }} />
+          <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ backgroundColor: '#eee', height: 20, width: '70%', borderRadius: 4, animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div style={{ backgroundColor: '#eee', height: 14, width: '50%', borderRadius: 4, animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div style={{ backgroundColor: '#eee', height: 14, width: '40%', borderRadius: 4, animation: 'pulse 1.5s ease-in-out infinite' }} />
+          </div>
+        </div>
+      ))}
+    </div>
+    <style>{`
+      @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.4; }
+        100% { opacity: 1; }
+      }
+    `}</style>
+  </div>
+)
   if (error) return <p>Error: {error}</p>
 
   return (

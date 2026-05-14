@@ -107,7 +107,54 @@ function Gym() {
     }
   }
 
-  if (loading) return <p style={{ padding: '20px' }}>Loading gym...</p>
+  if (loading) return (
+  <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{
+          backgroundColor: '#eee',
+          height: 64, width: 64,
+          borderRadius: '50%',
+          animation: 'pulse 1.5s ease-in-out infinite'
+        }} />
+        <div style={{ flex: 1 }}>
+          <div style={{
+            backgroundColor: '#eee',
+            height: 16, width: '60%',
+            borderRadius: 4,
+            animation: 'pulse 1.5s ease-in-out infinite'
+          }} />
+          <div style={{ height: 8 }} />
+          <div style={{
+            backgroundColor: '#eee',
+            height: 12, width: '40%',
+            borderRadius: 4,
+            animation: 'pulse 1.5s ease-in-out infinite'
+          }} />
+        </div>
+      </div>
+      <div style={{
+        backgroundColor: '#eee',
+        height: 300, width: '100%',
+        borderRadius: 8,
+        animation: 'pulse 1.5s ease-in-out infinite'
+      }} />
+      <div style={{
+        backgroundColor: '#eee',
+        height: 100, width: '100%',
+        borderRadius: 8,
+        animation: 'pulse 1.5s ease-in-out infinite'
+      }} />
+    </div>
+    <style>{`
+      @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.4; }
+        100% { opacity: 1; }
+      }
+    `}</style>
+  </div>
+)
   if (error) return <p style={{ padding: '20px' }}>Error: {error}</p>
   if (!gym) return <p style={{ padding: '20px' }}>Gym not found.</p>
 
@@ -191,7 +238,7 @@ function Gym() {
           </button>
         )}
       </div>
-      
+
       {submitSuccess && (
         <p style={{ color: 'green', fontSize: '14px', marginBottom: '12px' }}>
           Review submitted successfully!
