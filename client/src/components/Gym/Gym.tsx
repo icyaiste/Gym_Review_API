@@ -38,6 +38,8 @@ function Gym() {
   })
   const [submitting, setSubmitting] = useState<boolean>(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [submitSuccess, setSubmitSuccess] = useState<boolean>(false)
+
 
   const getAverageRating = (gym: Gym) => {
     const ratings =
@@ -92,6 +94,8 @@ function Gym() {
       )
       setShowForm(false)
       setFormData({ author: '', rating: 5, comment: '' })
+      setSubmitSuccess(true)
+      setTimeout(() => setSubmitSuccess(false), 3000)
     } catch (err: any) {
       if (err.response?.status === 401) {
         setSubmitError('You must be logged in to post a review.')
@@ -187,6 +191,12 @@ function Gym() {
           </button>
         )}
       </div>
+      
+      {submitSuccess && (
+        <p style={{ color: 'green', fontSize: '14px', marginBottom: '12px' }}>
+          Review submitted successfully!
+        </p>
+      )}
 
       {/* Review form */}
       {showForm && (
