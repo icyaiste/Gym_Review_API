@@ -3,9 +3,11 @@ import cors from 'cors'
 import { authMiddleware } from './auth/auth'
 import { gyms as gymsData } from './src/database/data'
 import dotenv from 'dotenv'
+import openidConnect from 'express-openid-connect'
 
 dotenv.config()
 
+const { requiresAuth } = openidConnect
 const app = express()
 const port = process.env.PORT || 3000
 
@@ -43,13 +45,11 @@ app.get('/gyms', (req, res) => {
     res.status(500).json({ message: 'Error fetching gyms' })
   }
 })
-// Profile endpoint - requires authentication
-app.get('/profile', (req, res) => {
-  if (req.oidc.isAuthenticated()) {
+
+
+// Protected with requiresAuth() — returns 401 (not redirect) due to errorOnRequiredAuth: true
+app.get('/profile', requiresAuth(), (req, res) => {
     res.json(req.oidc.user)
-  } else {
-    res.status(401).json({ message: 'Unauthorized' })
-  }
 })
 
 app.get('/gyms/:id', (req, res) => {
@@ -68,10 +68,9 @@ app.get('/gyms/:id', (req, res) => {
   }
 })
 
-app.post('/gyms/:id/reviews', (req, res) => {
+//Protected with requiresAuth() — unauthenticated POST returns 401
+app.post('/gyms/:id/reviews', requiresAuth(), (req, res) => {
   try {
-  console.log('POST /gyms/:id/reviews hit, id:', req.params.id)
-  console.log('Request body:', req.body)
     const gymId = req.params.id
     const { author, rating, comment } = req.body
     const gym = gymsData.find(gym => gym.id === gymId)
