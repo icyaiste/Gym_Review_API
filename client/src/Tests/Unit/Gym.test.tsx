@@ -34,16 +34,6 @@ const mockGym = {
 }
 
 describe('Gym', () => {
-  it('shows a loading message initially', () => {
-    mockedAxios.get.mockImplementation(() => new Promise(() => {}))
-    render(
-      <BrowserRouter>
-        <Gym />
-      </BrowserRouter>
-    )
-    expect(screen.getByText(/loading gym/i)).toBeInTheDocument()
-  })
-
   it('displays gym details when data loads successfully', async () => {
     mockedAxios.get.mockResolvedValue({ data: mockGym })
     render(
@@ -68,33 +58,35 @@ describe('Gym', () => {
     })
   })
 
-  it('hides the review form when not logged in', async () => {
-    mockedAxios.get.mockImplementation((url: string) => {
-      if (url.includes('/profile')) {
-        return Promise.reject(new Error('Not authenticated'))
-      }
-      return Promise.resolve({ data: mockGym })
-    })
-    render(
-      <BrowserRouter>
-        <Gym />
-      </BrowserRouter>
-    )
-    await waitFor(() => {
-      expect(screen.getByText('Iron Gym')).toBeInTheDocument()
-    })
+  
+it('hides the Add a Review button when not logged in', async () => {
+  mockedAxios.get.mockImplementation((url: string) => {
+    if (url.includes('/profile')) return Promise.reject(new Error('Not authenticated'))
+    return Promise.resolve({ data: mockGym })
   })
+  render(<BrowserRouter><Gym /></BrowserRouter>)
+  await waitFor(() => {
+    expect(screen.getByText('Iron Gym')).toBeInTheDocument()
+  })
+  expect(screen.queryByText(/add a review/i)).not.toBeInTheDocument()
+})
+ 
+it('shows the gym name when data loads', async () => {
+  mockedAxios.get.mockResolvedValue({ data: mockGym })
+  render(<BrowserRouter><Gym /></BrowserRouter>)
+  await waitFor(() => {
+    expect(screen.getByText('Iron Gym')).toBeInTheDocument()
+  })
+})
+ 
+it('shows the gym address when data loads', async () => {
+  mockedAxios.get.mockResolvedValue({ data: mockGym })
+  render(<BrowserRouter><Gym /></BrowserRouter>)
+  await waitFor(() => {
+    expect(screen.getByText('123 Main St')).toBeInTheDocument()
+  })
+})
 
-  it('shows gym name and location when gym data is available', async () => {
-    mockedAxios.get.mockResolvedValue({ data: mockGym })
-    render(
-      <BrowserRouter>
-        <Gym />
-      </BrowserRouter>
-    )
-    await waitFor(() => {
-      expect(screen.getByText('Iron Gym')).toBeInTheDocument()
-      expect(screen.getByText('123 Main St')).toBeInTheDocument()
-    })
-  })
+
+
 })

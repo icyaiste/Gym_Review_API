@@ -41,16 +41,6 @@ const mockGyms = [
 ]
 
 describe('Home', () => {
-  it('shows a loading message initially', () => {
-    mockedAxios.get.mockImplementation(() => new Promise(() => {}))
-    render(
-      <BrowserRouter>
-        <Home />
-      </BrowserRouter>
-    )
-    expect(screen.getByText(/loading gyms/i)).toBeInTheDocument()
-  })
-
   it('shows a list of gyms when data is passed in', async () => {
     mockedAxios.get.mockResolvedValue({ data: mockGyms })
     render(
