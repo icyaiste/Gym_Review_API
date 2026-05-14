@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 type Review = {
-  rating?: number
+  id: string;
+  author: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
 }
 
 type Gym = {
@@ -15,6 +20,8 @@ type Gym = {
 }
 
 const Home = () => {
+  const navigate = useNavigate()
+
   const [gyms, setGyms] = useState<Gym[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -47,7 +54,7 @@ const Home = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>🏋️ Gym Reviews</h1>
+      <h1> Gym Reviews</h1>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
         {gyms.map((gym) => {
           const averageRating = getAverageRating(gym)
@@ -75,16 +82,16 @@ const Home = () => {
             <div style={{ padding: '16px' }}>
               <h3>{gym.name}</h3>
               <p style={{ color: '#666', fontSize: '14px' }}>
-                📍 {gym.city || gym.address || 'Location unavailable'}
+                {gym.city || gym.address || 'Location unavailable'}
               </p>
               <p style={{ fontSize: '14px' }}>{gym.address || 'No address listed'}</p>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
                 <span style={{ fontWeight: 'bold' }}>Gym</span>
                 <span>
-                  ⭐ {averageRating ? averageRating.toFixed(1) : 'N/A'} ({reviewCount} reviews)
+                  {averageRating ? averageRating.toFixed(1) : 'N/A'} ({reviewCount} reviews)
                 </span>
               </div>
-              <button
+              <button onClick={() => navigate(`/gym/${gym.id}`)}
                 style={{
                   marginTop: '12px',
                   padding: '8px 16px',
