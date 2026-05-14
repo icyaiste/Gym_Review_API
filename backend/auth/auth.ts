@@ -1,7 +1,7 @@
 import { auth } from "express-openid-connect";
-import dotenv from "dotenv";
+//import dotenv from "dotenv";
 
-dotenv.config();
+//dotenv.config();
 
 const port = process.env.PORT || 3000;
 const sessionSecret =
