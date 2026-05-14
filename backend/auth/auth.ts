@@ -14,7 +14,7 @@ if (!sessionSecret) {
 
 const config = {
   authRequired: false,
-  auth0Logout: false,
+  auth0Logout: true,
   idpLogout: false,
   secret: sessionSecret,
   baseURL: process.env.AUTH0_BASE_URL || `http://localhost:${port}`,
@@ -31,7 +31,7 @@ const config = {
   authorizationParams: {
     response_type: 'code',
     scope: 'openid profile email',
-  },
+  },errorOnRequiredAuth: true, //  Returns 401 instead of redirecting on protected routes
 };
 
 export const authMiddleware = auth(config);
