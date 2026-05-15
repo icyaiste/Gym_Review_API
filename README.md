@@ -104,25 +104,6 @@ Below is a list of common security checklist items and an explanation of what th
 
 - **CORS**: The backend sets CORS `origin` to `CLIENT_ORIGIN` (defaults to `http://localhost:5173`) and `credentials: true`. Why: restricting CORS to the known client origin prevents other origins from making authenticated cross-origin requests using the session cookie.
 
-- **HTTPS / secure cookies**: In production, cookies must be transmitted only over HTTPS and with the `Secure` flag. The auth library will set cookie flags based on `baseURL`. Why: `Secure` prevents cookie theft over unencrypted networks.
-
-- **HttpOnly and SameSite cookies**: Using HttpOnly prevents JavaScript access to session cookies; `SameSite` reduces CSRF risk when correctly configured. Why: together they lower the risk of token theft and some CSRF attacks.
-
-- **CSRF protection**: Because the API uses cookies for authentication, CSRF must be considered. The current project relies on `SameSite` cookie behavior and restricting CORS to the client origin. For stricter protection, add a CSRF token (double submit cookie or server-side token) on state-changing requests. Why: CSRF attacks can cause authenticated users to perform unwanted actions.
-
-- **Input validation & output encoding**: Routes parse JSON and perform minimal checks. For production, validate all inputs (e.g., using a schema validator like `zod` or `joi`) and encode outputs. Why: prevents injection and malformed data risks.
-
-- **Rate limiting / brute force protection**: Not included by default. Add middleware (e.g., `express-rate-limit`) for endpoints that modify state or authenticate. Why: reduces risk of automated attacks and resource abuse.
-
-- **Secrets & environment variables**: Secrets (Auth0 client secret, session secret) are read from environment variables and not checked into source control. Why: prevents secret leakage in the repository and supports secret rotation.
-
-- **Least privilege and OAuth scopes**: Use minimal OAuth scopes (`openid profile email`) and request only the information required. Why: limits access surface and potential damage if tokens are compromised.
-
-- **Dependency updates & monitoring**: Keep dependencies up to date and monitor for vulnerabilities (Dependabot, `npm audit`). Why: reduces risk from known vulnerable packages.
-
-- **Error handling & logging**: The app returns generic 500 messages on unexpected errors. Why: avoid leaking internals in responses; in production log full errors to a secure logging backend with access controls.
-
-- **Database / data storage**: This project uses in-memory seed data for demo purposes. For real data stores, use parameterized queries or an ORM and enforce least-privilege DB credentials. Why: prevents SQL injection and limits blast radius on compromise.
 
 - **Content Security Policy (CSP)**: Add a CSP header (via `helmet`) in production to restrict loaded resources. Why: reduces XSS attack surface by limiting allowed script/style sources.
 
