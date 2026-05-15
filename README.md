@@ -79,9 +79,8 @@ This repository contains a backend API and a React client for reviewing gyms. Th
 
 		![image alt](./image.png)
 
-	- Passing GitHub Actions pipeline (placeholder - replace with real screenshot):
 
-		![CI pipeline passing](![alt text](image-1.png))
+		![alt text](image-1.png)
 
 ## Authentication
 
