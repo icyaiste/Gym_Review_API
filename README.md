@@ -81,7 +81,7 @@ This repository contains a backend API and a React client for reviewing gyms. Th
 
 	- Passing GitHub Actions pipeline (placeholder - replace with real screenshot):
 
-		![CI pipeline passing](docs/screenshots/ci-pass.svg)
+		![CI pipeline passing](![alt text](image-1.png))
 
 ## Authentication
 
