@@ -77,7 +77,7 @@ This repository contains a backend API and a React client for reviewing gyms. Th
 
 	- Passing tests locally:
 
-		![Passing tests locally](docs/screenshots/tests-pass.svg)
+		![image alt](./image.png)
 
 	- Passing GitHub Actions pipeline (placeholder - replace with real screenshot):
 
@@ -127,7 +127,17 @@ Below is a list of common security checklist items and an explanation of what th
 
 - **Content Security Policy (CSP)**: Add a CSP header (via `helmet`) in production to restrict loaded resources. Why: reduces XSS attack surface by limiting allowed script/style sources.
 
-If you'd like, I can open pull requests to add missing protections (helmet, rate limiting, CSRF tokens, input validation) and demonstrate them with tests.
+
+
+ 
+ 
+**Reflection**:
+**Implementation choices**: We chose Auth0 with express-openid-connect over Firebase because the session-based approach kept authentication logic server-side, which aligned with our security goals — no tokens exposed to client-side JavaScript. Using requiresAuth() middleware also made it straightforward to protect routes consistently without repeating auth logic in each handler.
+
+For the database we used an in-memory array, which let us focus on testing and authentication rather than database setup and migrations. It also made integration tests simpler since there was no external dependency to seed or tear down.
+
+**What was challenging**: The hardest part was protecting routes and then testing them correctly, especially in integration tests. We needed to verify that POST /gyms and POST /gyms/:id/reviews return 401 for unauthenticated requests — but without spinning up a real Auth0 session. We solved this by testing the raw HTTP responses against our app instance directly using node:http, which let us confirm the 401 behavior without mocking the auth middleware away entirely.
+ 
 
 ## Where to look in this repo
 
