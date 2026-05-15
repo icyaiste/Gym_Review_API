@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="200">
+  <rect width="100%" height="100%" fill="#001219" />
+  <style>
+    .mono{font-family: monospace; fill:#c7f9cc; font-size:14px}
+    .title{font-family: sans-serif; fill:#90e0ef; font-size:18px; font-weight:bold}
+  </style>
+  <text x="20" y="40" class="title">GitHub Actions pipeline (placeholder)</text>
+  <text x="20" y="80" class="mono">Please replace this image with a screenshot of the successful workflow run</text>
+  <text x="20" y="110" class="mono">Path: .github/workflows/test.yml</text>
+</svg>
