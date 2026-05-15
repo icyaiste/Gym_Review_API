@@ -105,13 +105,11 @@ Below is a list of common security checklist items and an explanation of what th
 - **CORS**: The backend sets CORS `origin` to `CLIENT_ORIGIN` (defaults to `http://localhost:5173`) and `credentials: true`. Why: restricting CORS to the known client origin prevents other origins from making authenticated cross-origin requests using the session cookie.
 
 
-- **Content Security Policy (CSP)**: Add a CSP header (via `helmet`) in production to restrict loaded resources. Why: reduces XSS attack surface by limiting allowed script/style sources.
-
 
 
  
  
-**Reflection**:
+# Reflection:
 **Implementation choices**: We chose Auth0 with express-openid-connect over Firebase because the session-based approach kept authentication logic server-side, which aligned with our security goals — no tokens exposed to client-side JavaScript. Using requiresAuth() middleware also made it straightforward to protect routes consistently without repeating auth logic in each handler.
 
 For the database we used an in-memory array, which let us focus on testing and authentication rather than database setup and migrations. It also made integration tests simpler since there was no external dependency to seed or tear down.
