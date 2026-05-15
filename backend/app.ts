@@ -52,10 +52,32 @@ app.get('/profile', requiresAuth(), (req, res) => {
     res.json(req.oidc.user)
 })
 
+// asks backend if user is authenticated 
+app.get('/me', (req, res) => {
+  res.json({ isAuthenticated: req.oidc.isAuthenticated() })
+})
+
+app.post('/gyms',requiresAuth(), (req, res) => {
+  try {
+    const { name, city, address } = req.body
+    const newGym = {
+      id: `gym-${gymsData.length + 1}`,
+      name,
+      city,
+      address,
+      reviews: []
+    }
+    gymsData.push(newGym)
+    res.status(201).json(newGym)
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding gym' })
+  }
+})
+
 app.get('/gyms/:id', (req, res) => {
   try {
-    console.log('GET /gyms/:id hit, id:', req.params.id)
-    console.log('Gyms data length:', gymsData.length)
+    //console.log('GET /gyms/:id hit, id:', req.params.id)
+    //console.log('Gyms data length:', gymsData.length)
     const gymId = req.params.id
     const gym = gymsData.find(gym => gym.id === gymId)
     if (gym) {
