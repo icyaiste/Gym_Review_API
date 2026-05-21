@@ -39,7 +39,7 @@ This repository contains a backend API and a React client for reviewing gyms. Th
 
 	- The shared example is available at [/.env.example](.env.example). Fill in `AUTH0_DOMAIN`, `AUTH0_CLIENT_ID`, `AUTH0_CLIENT_SECRET`, and `AUTH0_SECRET` for the backend and the callback URLs for the client.
 
-	 **Generate the Prisma client:**
+- **Generate the Prisma client:**
 
 	```bash
 	npx prisma generate
