@@ -1,3 +1,6 @@
+//Keeping the data so that someone else can reseed locally.
+//Otherwise database is seeded and doesn't import from this file anymore.
+
 import {Gym} from './types';
 
 export const gyms: Gym[] = [

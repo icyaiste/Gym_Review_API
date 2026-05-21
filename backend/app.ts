@@ -1,9 +1,9 @@
 import express from 'express'
 import cors from 'cors'
 import { authMiddleware } from './auth/auth'
-import { gyms as gymsData } from './src/database/data'
 import dotenv from 'dotenv'
 import openidConnect from 'express-openid-connect'
+import prisma from './src/database/db'
 
 dotenv.config()
 
@@ -11,7 +11,6 @@ const { requiresAuth } = openidConnect
 const app = express()
 const port = process.env.PORT || 3000
 
-// CORS configuration - must be before auth middleware
 app.use(cors({
   origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
   credentials: true,
@@ -25,8 +24,6 @@ app.get('/', (req, res) => {
 })
 
 app.get('/login', (req, res) => {
-  // The auth middleware from express-openid-connect handles login
-  // This route is automatically provided, but we ensure it's accessible
   res.oidc.login({
     returnTo: req.query.returnTo as string || process.env.AUTH0_REDIRECT_URI || 'http://localhost:5173/callback',
   })
@@ -38,48 +35,44 @@ app.get('/logout', (req, res) => {
   })
 })
 
-app.get('/gyms', (req, res) => {
+app.get('/gyms', async (req, res) => {
   try {
-    res.json(gymsData)
+    const gyms = await prisma.gym.findMany({
+      include: { reviews: true }
+    })
+    res.json(gyms)
   } catch (error) {
     res.status(500).json({ message: 'Error fetching gyms' })
   }
 })
 
-
-// Protected with requiresAuth() — returns 401 (not redirect) due to errorOnRequiredAuth: true
 app.get('/profile', requiresAuth(), (req, res) => {
-    res.json(req.oidc.user)
+  res.json(req.oidc.user)
 })
 
-// asks backend if user is authenticated 
 app.get('/me', (req, res) => {
   res.json({ isAuthenticated: req.oidc.isAuthenticated() })
 })
 
-app.post('/gyms',requiresAuth(), (req, res) => {
+app.post('/gyms', requiresAuth(), async (req, res) => {
   try {
     const { name, city, address } = req.body
-    const newGym = {
-      id: `gym-${gymsData.length + 1}`,
-      name,
-      city,
-      address,
-      reviews: []
-    }
-    gymsData.push(newGym)
+    const newGym = await prisma.gym.create({
+      data: { name, city, address },
+      include: { reviews: true }
+    })
     res.status(201).json(newGym)
   } catch (error) {
     res.status(500).json({ message: 'Error adding gym' })
   }
 })
 
-app.get('/gyms/:id', (req, res) => {
+app.get('/gyms/:id', async (req, res) => {
   try {
-    //console.log('GET /gyms/:id hit, id:', req.params.id)
-    //console.log('Gyms data length:', gymsData.length)
-    const gymId = req.params.id
-    const gym = gymsData.find(gym => gym.id === gymId)
+    const gym = await prisma.gym.findUnique({
+      where: { id: req.params.id as string },
+      include: { reviews: true }
+    })
     if (gym) {
       res.json(gym)
     } else {
@@ -90,26 +83,27 @@ app.get('/gyms/:id', (req, res) => {
   }
 })
 
-//Protected with requiresAuth() — unauthenticated POST returns 401
-app.post('/gyms/:id/reviews', requiresAuth(), (req, res) => {
+app.post('/gyms/:id/reviews', requiresAuth(), async (req, res) => {
   try {
-    const gymId = req.params.id
+    const gymId = req.params.id as string
     const { author, rating, comment } = req.body
-    const gym = gymsData.find(gym => gym.id === gymId)
 
-    if (gym) {
-      const newReview = {
-        id: `r-${gymId.slice(4)}-${gym.reviews.length + 1}`,
+    const gym = await prisma.gym.findUnique({ where: { id: gymId } })
+    if (!gym) {
+      res.status(404).json({ message: 'Gym not found' })
+      return
+    }
+
+    const newReview = await prisma.review.create({
+      data: {
         author,
         rating,
         comment,
-        createdAt: new Date().toISOString().slice(0, 10)
+        createdAt: new Date().toISOString().slice(0, 10),
+        gymId,
       }
-      gym.reviews.push(newReview)
-      res.status(201).json(newReview)
-    } else {
-      res.status(404).json({ message: 'Gym not found' })
-    }
+    })
+    res.status(201).json(newReview)
   } catch (error) {
     res.status(500).json({ message: 'Error adding review' })
   }

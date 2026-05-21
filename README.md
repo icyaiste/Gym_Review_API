@@ -39,6 +39,26 @@ This repository contains a backend API and a React client for reviewing gyms. Th
 
 	- The shared example is available at [/.env.example](.env.example). Fill in `AUTH0_DOMAIN`, `AUTH0_CLIENT_ID`, `AUTH0_CLIENT_SECRET`, and `AUTH0_SECRET` for the backend and the callback URLs for the client.
 
+	 **Generate the Prisma client:**
+
+	```bash
+	npx prisma generate
+	```
+
+- **Run migrations**
+ (creates the tables in your database):
+
+	```bash
+	npx prisma migrate dev
+	```
+- **View your data in the browser**(optional):
+
+	```bash
+	npx prisma studio
+	```
+
+	- Note: You need a valid DATABASE_URL in backend/.env before running any Prisma commands. See .env.example for the expected format.
+
 ## Run Locally
 
 - **Start the backend**
