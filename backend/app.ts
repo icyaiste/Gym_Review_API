@@ -5,6 +5,15 @@ import dotenv from 'dotenv'
 import openidConnect from 'express-openid-connect'
 import prisma from './src/database/db'
 
+function requireAuth(req: any, res: any, next: any) {
+  // Allow integration tests to bypass Auth0
+  if (process.env.NODE_ENV === 'test' && req.headers.authorization === 'Bearer test-token') {
+    return next()
+  }
+  // In production, use Auth0
+  return requiresAuth()(req, res, next)
+}
+
 dotenv.config()
 
 const { requiresAuth } = openidConnect
@@ -46,7 +55,7 @@ app.get('/gyms', async (req, res) => {
   }
 })
 
-app.get('/profile', requiresAuth(), (req, res) => {
+app.get('/profile', requireAuth, (req, res) => {
   res.json(req.oidc.user)
 })
 
@@ -54,7 +63,7 @@ app.get('/me', (req, res) => {
   res.json({ isAuthenticated: req.oidc.isAuthenticated() })
 })
 
-app.post('/gyms', requiresAuth(), async (req, res) => {
+app.post('/gyms', requireAuth, async (req, res) => {
   try {
     const { name, city, address } = req.body
     const newGym = await prisma.gym.create({
@@ -83,7 +92,7 @@ app.get('/gyms/:id', async (req, res) => {
   }
 })
 
-app.post('/gyms/:id/reviews', requiresAuth(), async (req, res) => {
+app.post('/gyms/:id/reviews', requireAuth, async (req, res) => {
   try {
     const gymId = req.params.id as string
     const { author, rating, comment } = req.body

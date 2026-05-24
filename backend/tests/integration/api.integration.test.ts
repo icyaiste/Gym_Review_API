@@ -1,21 +1,40 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { AddressInfo } from 'node:net'
-import { createApp } from '../../src/app'
+import {app} from '../../app'
+
+vi.mock('../prisma/client', () => ({
+  default: {
+    gym: {
+      findMany: vi.fn().mockResolvedValue([]),
+      findUnique: vi.fn().mockResolvedValue(null),
+      create: vi.fn(),
+    },
+    review: {
+      create: vi.fn(),
+    },
+  },
+}))
 
 describe('API integration', () => {
-  let server: ReturnType<ReturnType<typeof createApp>['listen']>
+  let server: ReturnType<typeof app.listen>
   let baseUrl = ''
 
-  beforeEach(() => {
-    const app = createApp()
-    server = app.listen(0)
-    const address = server.address() as AddressInfo
-    baseUrl = `http://127.0.0.1:${address.port}`
+  beforeEach(async () => {
+  await new Promise<void>((resolve) => {
+    server = app.listen(0, () => {
+      const address = server.address() as AddressInfo
+      baseUrl = `http://127.0.0.1:${address.port}`
+      resolve()
+    })
   })
+})
 
-  afterEach(() => {
-    server.close()
+afterEach(async () => {
+  await new Promise<void>((resolve) => {
+    server.close(() => resolve())
   })
+})
+
 
   it('GET /gyms returns 200 and an array', async () => {
     const response = await fetch(`${baseUrl}/gyms`)
