@@ -26,6 +26,12 @@ jobs:
         run: npm install
         working-directory: ./backend
 
+      - name: Generate Prisma Client
+        run: npx prisma generate
+        working-directory: ./backend
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
       - name: Run tests
         run: npm test
         working-directory: ./backend
@@ -37,3 +43,4 @@ jobs:
           AUTH0_REDIRECT_URI: ${{ secrets.AUTH0_REDIRECT_URI }}
           AUTH0_POST_LOGOUT_REDIRECT: http://localhost:5173
           CLIENT_ORIGIN: http://localhost:5173
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
