@@ -6,9 +6,8 @@
   "scripts": {
     "start": "tsx index.ts",
     "dev": "nodemon --exec tsx index.ts",
-    "build": "tsc",
-    "test": "vitest",
-    "type": "module"
+    "build": "tsc && node -e \"require('fs').cpSync('src/generated', 'dist/src/generated', {recursive: true})\"",
+    "test": "vitest"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -16,7 +15,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",

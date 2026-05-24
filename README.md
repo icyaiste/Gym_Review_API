@@ -75,7 +75,32 @@ This repository contains a backend API and a React client for reviewing gyms. Th
 	npm run dev
 	```
 
-	The client expects the backend at `VITE_BACKEND_URL` (default `http://localhost:3000`).
+	The client expects the backend at `VITE_BACKEND_URL` (default `http://localhost:3000`)
+
+	## Run with Docker
+
+Make sure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed.
+
+1. Create a `.env` file in the root with your Auth0 credentials (see `.env.example`)
+2. Build and start the containers:
+
+```bash
+	docker compose up --build -d
+```
+
+3. Run database migrations:
+
+```bash
+	docker compose exec backend npx prisma migrate deploy
+```
+
+The backend will be available at `http://localhost:3000`.
+
+To stop the containers:
+
+```bash
+docker compose down
+```
 
 ## Testing
 
