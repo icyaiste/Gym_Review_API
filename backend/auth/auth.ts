@@ -30,7 +30,14 @@ const config = {
   authorizationParams: {
     response_type: 'code',
     scope: 'openid profile email',
-  },errorOnRequiredAuth: true, //  Returns 401 instead of redirecting on protected routes
-};
+  },
+  session: {
+    cookie: {
+      sameSite: 'None' as const,
+      secure: process.env.NODE_ENV === 'production',
+    }
+  },
+  errorOnRequiredAuth: true,
+}
 
 export const authMiddleware = auth(config);
