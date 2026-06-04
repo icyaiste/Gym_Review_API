@@ -8,8 +8,8 @@ This repository contains a backend API and a React client for reviewing gyms. Th
 ## Quick Start
 
 - **Deployed URLs** (when available):
-  - Frontend: `https://gym-reviews.example.com` (replace with your actual frontend URL)
-  - Backend API: `https://api.gym-reviews.example.com` (replace with your actual backend URL)
+  - Frontend: `(https://gym-review-api.vercel.app/)` 
+  - Backend API: `https://gym-review-api.onrender.com`
   - *(Update these URLs in `VITE_BACKEND_URL` and `CLIENT_ORIGIN` after deployment)*
 
 ## Setup
@@ -154,11 +154,9 @@ Make sure you have [Docker Desktop](https://www.docker.com/products/docker-deskt
 - **Screenshots**
 
 	- Passing tests locally:
+<img width="873" height="291" alt="image" src="https://github.com/user-attachments/assets/7ca5c8c3-8c78-4ab5-a5d6-99375ecdd3fe" />
 
-		![image alt](./image.png)
-
-
-		![alt text](image-1.png)
+		
 
 ## Authentication
 
@@ -261,4 +259,12 @@ For the database we used an in-memory array, which let us focus on testing and a
 **What was challenging**: The hardest part was protecting routes and then testing them correctly, especially in integration tests. We needed to verify that POST /gyms and POST /gyms/:id/reviews return 401 for unauthenticated requests — but without spinning up a real Auth0 session. We solved this by testing the raw HTTP responses against our app instance directly using node:http, which let us confirm the 401 behavior without mocking the auth middleware away entirely.
  
 ---
+# Reflection update after production :
+**Implementation choices**:
+For the database I used Prisma with a relational database, which let me focus on testing and authentication rather than database setup. The ORM also helps prevent SQL injection attacks by parameterizing queries.
+**What was challenging**:
 
+Cookies and CORS configuration in production. 
+Getting cookies and CORS to work correctly was trickier than expected, especially when deploying frontend and backend to separate domains. By default, browsers don't send cookies on cross-origin requests so if I set SameSite: Strict, cookies wouldn't work across domains but if I set SameSite: None without Secure (HTTPS), it fails in production.
+
+Another challenge was managing different environment variables for local and production environments because I had to create a new app on Auth0 because now I'm working alone on the project and reconnect the app. I forgot to set some variables in a new environment which broke authentication silently.
