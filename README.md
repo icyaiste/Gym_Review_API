@@ -5,6 +5,13 @@ This repository contains a backend API and a React client for reviewing gyms. Th
 
 **Shared env reference:** See [/.env.example](.env.example) for the variables used by both client and backend.
 
+## Quick Start
+
+- **Deployed URLs** (when available):
+  - Frontend: `https://gym-reviews.example.com` (replace with your actual frontend URL)
+  - Backend API: `https://api.gym-reviews.example.com` (replace with your actual backend URL)
+  - *(Update these URLs in `VITE_BACKEND_URL` and `CLIENT_ORIGIN` after deployment)*
+
 ## Setup
 
 - **How to clone the repository**
@@ -81,26 +88,52 @@ This repository contains a backend API and a React client for reviewing gyms. Th
 
 Make sure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed.
 
-1. Create a `.env` file in the root with your Auth0 credentials (see `.env.example`)
+1. **Create environment files**
+
+   Copy the example file and fill in your Auth0 credentials:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your Auth0 credentials:
+   # - AUTH0_DOMAIN
+   # - AUTH0_CLIENT_ID
+   # - AUTH0_CLIENT_SECRET
+   # - AUTH0_SECRET
+   ```
+
 2. Build and start the containers:
 
 ```bash
 	docker compose up --build -d
 ```
 
-3. Run database migrations:
+   - `-d` runs containers in the background
+   - `--build` rebuilds images if needed
 
-```bash
-	docker compose exec backend npx prisma migrate deploy
-```
 
-The backend will be available at `http://localhost:3000`.
+3. **Run database migrations**
 
-To stop the containers:
+   ```bash
+   docker compose exec backend npx prisma migrate deploy
+   ```
 
-```bash
-docker compose down
-```
+   This creates and initializes your database schema inside the container.
+
+4. **Verify services are running**
+
+   ```bash
+   docker compose ps
+   ```
+
+   You should see the backend and client containers running.
+
+### Accessing the Application
+
+- **Frontend**: `http://localhost:5173`
+- **Backend API**: `http://localhost:3000`
+- **Database Studio** (Prisma): 
+  ```bash
+  docker compose exec backend npx prisma studio
+  ```
 
 ## Testing
 
@@ -145,11 +178,77 @@ docker compose down
 
 Below is a list of common security checklist items and an explanation of what the project does and why.
 
-- **Tokens & storage**: Tokens are not stored in `localStorage` or other JS-accessible storage. The project relies on the session cookie provided by `express-openid-connect` (HttpOnly, signed by `AUTH0_SECRET`) so tokens are not exposed to client-side scripts. Why: storing tokens in `localStorage` risks theft via XSS; HttpOnly cookies reduce that attack surface.
+### 1. **Tokens & Storage: HttpOnly Session Cookies (Not localStorage)**
 
-- **CORS**: The backend sets CORS `origin` to `CLIENT_ORIGIN` (defaults to `http://localhost:5173`) and `credentials: true`. Why: restricting CORS to the known client origin prevents other origins from making authenticated cross-origin requests using the session cookie.
+**What we do:**
+- Tokens are **not** stored in `localStorage`, `sessionStorage`, or any client-side JavaScript-accessible storage
+- Instead, we rely on the **HttpOnly, Secure session cookie** provided by `express-openid-connect`
+- This cookie is set by the Auth0 middleware and automatically sent with every API request
 
+### 2. **CORS: Locked Down to Specific Origin**
 
+**What we do:**
+```typescript
+app.use(cors({
+  origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+  credentials: true,  // Allow cookies in cross-origin requests
+}))
+```
+
+**Why this matters:**
+- **Prevents unauthorized cross-origin requests**: Only requests from `CLIENT_ORIGIN` can access the API
+- **Credentials flag**: `credentials: true` tells the browser to include cookies in cross-origin requests **only if the origin matches**
+
+### 3. **Session Cookie: Secure & SameSite Flags**
+
+**What we do:**
+```typescript
+session: {
+  cookie: {
+    sameSite: 'None' as const,  // Allow cross-site cookies (needed for deployed setup)
+    secure: process.env.NODE_ENV === 'production',  // HTTPS only in production
+  }
+}
+```
+
+**Why this matters:**
+
+**Secure flag:**
+- In production, cookies are only sent over **HTTPS** (not HTTP)
+- Automatically enforced in production (`NODE_ENV === 'production'`)
+
+### 4. **Authentication Middleware on Protected Routes**
+
+**What we do:**
+```typescript
+function requireAuth(req, res, next) {
+  if (process.env.NODE_ENV === 'test' && req.headers.authorization === 'Bearer test-token') {
+    return next()  // Allow tests to bypass Auth0
+  }
+  return requiresAuth()(req, res, next)  // Check Auth0 session in production
+}
+
+// Protected route example:
+app.post('/gyms/:id/reviews', requireAuth, async (req, res) => {
+  // Only authenticated users can post reviews
+})
+
+*Why this matters:**
+- **Per-route protection**: Each sensitive endpoint explicitly requires authentication
+- **Fail-secure**: Unauthenticated requests return `401 Unauthorized` instead of succeeding
+- **Test-friendly**: Tests can use a test token to bypass Auth0 without mocking the middleware
+- **Prevents direct API abuse**: Users cannot bypass authentication by calling the API directly (e.g., with curl or Postman)
+
+**Unprotected routes:**
+- `GET /gyms` - Anyone can read gym data
+- `GET /gyms/:id` - Anyone can view individual gyms
+- `GET /me` - Public endpoint, tells client if user is authenticated (doesn't reveal user data)
+
+**Protected routes:**
+- `POST /gyms` - Only authenticated users can add gyms
+- `POST /gyms/:id/reviews` - Only authenticated users can post reviews
+
+---
 
 
  
@@ -161,13 +260,5 @@ For the database we used an in-memory array, which let us focus on testing and a
 
 **What was challenging**: The hardest part was protecting routes and then testing them correctly, especially in integration tests. We needed to verify that POST /gyms and POST /gyms/:id/reviews return 401 for unauthenticated requests — but without spinning up a real Auth0 session. We solved this by testing the raw HTTP responses against our app instance directly using node:http, which let us confirm the 401 behavior without mocking the auth middleware away entirely.
  
-
-## Where to look in this repo
-
-- Backend entry: [backend/index.ts](backend/index.ts#L1-L200)
-- Backend app factory: [backend/src/app.ts](backend/src/app.ts#L1-L200)
-- Auth config: [backend/auth/auth.ts](backend/auth/auth.ts#L1-L200)
-- Shared env example: [/.env.example](.env.example)
-
 ---
 

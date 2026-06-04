@@ -32,11 +32,11 @@ const config = {
     scope: 'openid profile email',
   },
   session: {
-    cookie: {
-      sameSite: 'None' as const,
-      secure: process.env.NODE_ENV === 'production',
-    }
-  },
+  cookie: {
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax' as const,
+    secure: process.env.NODE_ENV === 'production',
+  }
+},
   errorOnRequiredAuth: true,
 }
 
