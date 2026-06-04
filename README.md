@@ -230,6 +230,7 @@ function requireAuth(req, res, next) {
 app.post('/gyms/:id/reviews', requireAuth, async (req, res) => {
   // Only authenticated users can post reviews
 })
+```
 
 *Why this matters:**
 - **Per-route protection**: Each sensitive endpoint explicitly requires authentication
