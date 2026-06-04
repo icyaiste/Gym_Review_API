@@ -8,7 +8,7 @@ This repository contains a backend API and a React client for reviewing gyms. Th
 ## Quick Start
 
 - **Deployed URLs** (when available):
-  - Frontend: `(https://gym-review-api.vercel.app/)` 
+  - Frontend: `https://gym-review-api.vercel.app` 
   - Backend API: `https://gym-review-api.onrender.com`
   - *(Update these URLs in `VITE_BACKEND_URL` and `CLIENT_ORIGIN` after deployment)*
 
