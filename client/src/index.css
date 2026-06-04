@@ -1,22 +1,22 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  /* Luxury palette */
+  --text: #4a4438;
+  --text-h: #1f1b18;
+  --bg: #fbf7f2; /* warm cream */
+  --border: #e7e1d9;
+  --code-bg: #f6f3ee;
+  --accent: #b58f3a; /* gold */
+  --accent-bg: rgba(181,143,58,0.08);
+  --accent-border: rgba(181,143,58,0.35);
+  --social-bg: rgba(250, 247, 241, 0.6);
+  --shadow: rgba(20, 18, 15, 0.08) 0 12px 30px -8px, rgba(20,18,15,0.04) 0 6px 12px -6px;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: Georgia, 'Times New Roman', Times, serif;
   --mono: ui-monospace, Consolas, monospace;
 
   font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
+  letter-spacing: 0.14px;
   color-scheme: light dark;
   color: var(--text);
   background: var(--bg);
@@ -55,16 +55,128 @@ body {
 }
 
 #root {
-  width: 1126px;
+  width: 100%;
   max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  border-inline: none;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 }
+
+/* Header / Brand */
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 40px;
+  background: transparent;
+}
+.brand-link {
+  font-family: var(--heading);
+  font-size: 16px;
+  color: var(--text-h);
+  text-decoration: none;
+  font-weight: 400;
+  letter-spacing: 2.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+}
+.brand-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}
+.nav-links {
+  margin-left: auto;
+  display: flex;
+  gap: 20px;
+}
+.nav-links a {
+  color: #9a8f82;
+  text-decoration: none;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-size: 16px;
+}
+
+.nav-auth-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #9a8f82;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Buttons */
+button, .button {
+  font-family: var(--sans);
+  border-radius: 999px;
+  padding: 10px 18px;
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+  box-shadow: var(--shadow);
+  color: var(--text-h);
+  cursor: pointer;
+}
+.primary {
+  background: linear-gradient(180deg, rgba(181,143,58,0.95), rgba(181,143,58,0.9));
+  color: white;
+  border: 1px solid var(--accent-border);
+}
+
+/* Cards */
+.gym-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin-left: 40px;
+  margin-right: 40px;
+
+  @media (max-width: 1400px) {
+  .gym-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .gym-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .gym-grid {
+    grid-template-columns: 1fr;
+  }
+}
+}
+
+.gym-card {
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+.gym-card img { width:100%; object-fit:cover; height:320px }
+.gym-card .meta { padding: 24px; position: relative }
+.gym-card h3 { margin: 0 0 8px; font-family: var(--heading); font-weight: 500 }
+.gym-card p { margin: 0; color: #746b5f }
+
 
 h1,
 h2 {
@@ -109,3 +221,376 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Load premium fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;600&display=swap');
+
+:root {
+  --heading: 'Playfair Display', Georgia, serif;
+  --sans: 'Inter', system-ui, Roboto, sans-serif;
+}
+
+/* Hero / Title */
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin: 24px 0 28px;
+}
+.hero, .gym-grid { margin-left: 40px; margin-right: 40px }
+.hero-title {
+  text-align: left;
+  font-family: Georgia, 'Times New Roman', serif;
+  color: var(--text-h);
+  line-height: 1.1;
+  margin: 0 0 16px 0;
+  font-size: 68px;
+  letter-spacing: -1.4px;
+  font-weight: 400;
+}
+.hero-title .lead {
+  display: block;
+  font-weight: 400;
+  font-size: 68px;
+  color: var(--text-h);
+}
+.hero-title .accent {
+  display: block;
+  color: var(--accent);
+  font-weight: 400;
+  font-size: 64px;
+  margin-top: 0;
+}
+
+@media (max-width: 1024px) {
+  .hero-title { font-size: 36px }
+}
+
+/* Gym card refinements */
+.gym-card { position: relative; border-radius: 12px; overflow: hidden }
+.gym-card .meta { padding: 20px }
+.gym-card h3 { margin: 0 0 8px; font-family: var(--heading); font-size: 20px }
+.gym-card .location { color: #7b6f64; font-size: 14px; margin-bottom: 6px; letter-spacing: 0.2px; display: flex; gap: 8px; align-items: center }
+.gym-card .location::before { content: '◉'; color: var(--accent); font-size: 12px; flex-shrink: 0 }
+.gym-card .address { color: #9a8f82; font-size: 13px; margin-bottom: 10px; display: none }
+
+.rating-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.9));
+  padding: 8px 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  font-weight: 700;
+  color: var(--text-h);
+  box-shadow: 0 8px 30px rgba(20,18,15,0.08);
+  border: 1px solid var(--border);
+}
+.rating-badge .single-star { color: var(--accent); display:inline-flex }
+.rating-badge .rb-count { margin-left: 8px; color: #8f8578; font-size: 13px; font-weight: 500 }
+
+/* Buttons refinement */
+.button { font-family: var(--sans); border-radius: 999px }
+.primary { padding: 10px 18px; border: none }
+
+/* Details button on card */
+.details-button {
+  padding: 8px 12px;
+  background: white;
+  color: var(--text-h);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: none;
+  width: auto;
+  font-weight: 600;
+  font-size: 14px;
+}
+.details-button:hover { box-shadow: 0 6px 18px rgba(20,18,15,0.06) }
+
+/* Modal styling */
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 12px 48px rgba(20,18,15,0.12);
+  position: relative;
+}
+.modal-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #7b6f64;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-close-btn:hover { color: var(--text-h) }
+.modal-title {
+  font-family: var(--heading);
+  font-size: 28px;
+  color: var(--text-h);
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: -0.8px;
+}
+.modal-subtitle {
+  margin: 12px 0 0;
+  color: #9a8f82;
+  font-size: 15px;
+  font-weight: 400;
+}
+.modal-label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-h);
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+.modal-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+  font-family: var(--sans);
+  color: var(--text-h);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.modal-input::placeholder {
+  color: #b8b0a6;
+}
+.modal-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(181,143,58,0.1);
+}
+.modal-button {
+  width: 100%;
+  padding: 12px 16px;
+  background: #1f1b18;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-review-button{
+  padding: 12px 16px;
+  background: #b58f3a;
+  color: black;
+  border: none;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-review-button:hover {
+  background: #2a2520;
+}
+.add-review-button:disabled {
+  cursor: not-allowed;
+}
+
+/* Gym Detail Page */
+.back-button {
+  background: none;
+  border: none;
+  color: #7b6f64;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  margin-bottom: 32px;
+  padding: 0;
+  transition: color 0.2s;
+}
+.back-button:hover { color: var(--text-h) }
+
+.gym-page-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  max-width: 100%;
+}
+
+.gym-info-column {
+  flex: 1;
+}
+
+.reviews-column {
+  flex: 1;
+  min-width: 80%;
+}
+
+.gym-detail-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  position: sticky;
+  top: 40px;
+}
+
+.gym-detail-image {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  display: block;
+}
+
+.gym-detail-title {
+  font-family: var(--heading);
+  font-size: 28px;
+  color: var(--text-h);
+  margin: 0 0 12px 0;
+  font-weight: 400;
+  letter-spacing: -0.6px;
+}
+
+.gym-detail-location {
+  color: #7b6f64;
+  font-size: 14px;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+}
+
+.gym-detail-address {
+  color: #9a8f82;
+  font-size: 13px;
+  margin: 0 0 12px 0;
+}
+
+.gym-detail-description {
+  color: #7b6f64;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.reviews-heading {
+  font-family: var(--heading);
+  font-size: 24px;
+  color: var(--text-h);
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: -0.6px;
+}
+
+.success-message {
+  background: rgba(40, 167, 69, 0.1);
+  color: #155724;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.review-form-container {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-h);
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+  font-family: var(--sans);
+  color: var(--text-h);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input::placeholder {
+  color: #b8b0a6;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(181,143,58,0.1);
+}
+
+.cancel-button {
+  padding: 10px 16px;
+  background: white;
+  color: var(--text-h);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.cancel-button:hover {
+  background: var(--border);
+}
+
+.reviews-list {
+  display: grid;
+  gap: 16px;
+}
+
+.review-item {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 1024px) {
+  .gym-page-container {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .gym-detail-card {
+    position: static;
+  }
+}
+
+/* Inline row with reviews and details */
+.card-footer {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+.reviews-text { font-size: 12px; letter-spacing: 2px; color: #8f8578; text-transform: uppercase }

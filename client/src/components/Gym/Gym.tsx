@@ -162,226 +162,172 @@ function Gym() {
   const reviewCount = gym.reviews?.length ?? 0
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+    <div style={{ padding: '80px', backgroundColor: 'var(--bg)' }}>
       <button
         onClick={() => navigate('/')}
-        style={{
-          marginBottom: '16px',
-          padding: '8px 16px',
-          backgroundColor: 'transparent',
-          color: '#007bff',
-          border: '1px solid #007bff',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
+        className="back-button"
       >
-        Back to gyms
+        ← Back to gyms
       </button>
 
-      {/* Gym card */}
-      <div
-        style={{
-          border: '1px solid #ddd',
-          borderRadius: '8px',
-          overflow: 'hidden',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-          marginBottom: '32px',
-        }}
-      >
-        {gym.image ? (
-          <img
-            src={gym.image}
-            alt={gym.name}
-            style={{ width: '100%', height: '300px', objectFit: 'cover' }}
-          />
-        ) : (
-          <div style={{ width: '100%', height: '300px', backgroundColor: '#f2f2f2' }} />
-        )}
-        <div style={{ padding: '16px' }}>
-          <h2 style={{ marginBottom: '4px' }}>{gym.name}</h2>
-          <p style={{ color: '#666', fontSize: '14px', marginBottom: '4px' }}>
-            {gym.city || 'Location unavailable'}
-          </p>
-          <p style={{ fontSize: '14px', marginBottom: '8px' }}>
-            {gym.address || 'No address listed'}
-          </p>
-          {gym.description && (
-            <p style={{ fontSize: '14px', color: '#444', marginBottom: '8px' }}>
-              {gym.description}
-            </p>
-          )}
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
-            <span style={{ fontWeight: 'bold' }}>Gym</span>
-            <span>
-              {averageRating ? averageRating.toFixed(1) : 'N/A'} ({reviewCount} reviews)
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Reviews header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <h3 style={{ margin: 0 }}>Reviews</h3>
-        {isLoggedIn && !showForm && (
-          <button
-            onClick={() => setShowForm(true)}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-            }}
-          >
-            Add a Review
-          </button>
-        )}
-      </div>
-
-      {submitSuccess && (
-        <p style={{ color: 'green', fontSize: '14px', marginBottom: '12px' }}>
-          Review submitted successfully!
-        </p>
-      )}
-
-      {/* Review form */}
-      {showForm && (
-        <div
-          style={{
-            border: '1px solid #ddd',
-            borderRadius: '8px',
-            padding: '16px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-            marginBottom: '24px',
-          }}
-        >
-          <h4 style={{ marginTop: 0, marginBottom: '16px' }}>Write a Review</h4>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px' }}>
-              Your name
-            </label>
-            <input
-              type="text"
-              value={formData.author}
-              onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-              style={{
-                width: '100%',
-                padding: '8px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '14px',
-                boxSizing: 'border-box',
-              }}
-            />
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px' }}>
-              Rating (1–5)
-            </label>
-            <select
-              value={formData.rating}
-              onChange={(e) => setFormData({ ...formData, rating: Number(e.target.value) })}
-              style={{
-                width: '100%',
-                padding: '8px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '14px',
-                boxSizing: 'border-box',
-              }}
-            >
-              {[1, 2, 3, 4, 5].map((n) => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
-          </div>
-
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px' }}>
-              Comment
-            </label>
-            <textarea
-              value={formData.comment}
-              onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
-              rows={4}
-              style={{
-                width: '100%',
-                padding: '8px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '14px',
-                boxSizing: 'border-box',
-                resize: 'vertical',
-              }}
-            />
-          </div>
-
-          {submitError && (
-            <p style={{ color: 'red', fontSize: '14px', marginBottom: '12px' }}>{submitError}</p>
-          )}
-
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button
-              onClick={handleSubmit}
-              disabled={submitting}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: submitting ? '#aaa' : '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: submitting ? 'not-allowed' : 'pointer',
-              }}
-            >
-              {submitting ? 'Submitting...' : 'Submit Review'}
-            </button>
-            <button
-              onClick={() => { setShowForm(false); setSubmitError(null) }}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: 'transparent',
-                color: '#666',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Reviews list */}
-      {reviewCount === 0 ? (
-        <p style={{ color: '#666', fontSize: '14px' }}>No reviews yet.</p>
-      ) : (
-        <div style={{ display: 'grid', gap: '16px' }}>
-          {gym.reviews?.map((review, index) => (
-            <div
-              key={review.id ?? index}
-              style={{
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                padding: '16px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span style={{ fontWeight: 'bold', fontSize: '14px' }}>{review.author}</span>
-                <span style={{ fontSize: '14px', color: '#666' }}>{review.rating} / 5</span>
-              </div>
-              <p style={{ fontSize: '14px', color: '#444', margin: 0 }}>{review.comment}</p>
-              <p style={{ fontSize: '12px', color: '#999', marginTop: '8px', marginBottom: 0 }}>
-                {new Date(review.createdAt).toLocaleDateString()}
+      <div className="gym-page-container">
+        {/* Left: Gym Info Card */}
+        <div className="gym-info-column">
+          <div className="gym-detail-card">
+            {gym.image ? (
+              <img
+                src={gym.image}
+                alt={gym.name}
+                className="gym-detail-image"
+              />
+            ) : (
+              <div className="gym-detail-image" style={{ backgroundColor: '#f2f2f2' }} />
+            )}
+            <div style={{ padding: '24px' }}>
+              <h1 className="gym-detail-title">{gym.name}</h1>
+              <p className="gym-detail-location">
+                <span style={{ color: 'var(--accent)', marginRight: 8 }}>◉</span>
+                {gym.city || 'Location unavailable'}
               </p>
+              <p className="gym-detail-address">
+                {gym.address || 'No address listed'}
+              </p>
+              {gym.description && (
+                <p className="gym-detail-description">
+                  {gym.description}
+                </p>
+              )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: '20px', paddingTop: '20px', borderTop: '1px solid var(--border)' }}>
+                <div>
+                  <div style={{ fontSize: 12, color: '#9a8f82', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 6 }}>Average Rating</div>
+                  <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--accent)' }}>
+                    {averageRating ? averageRating.toFixed(1) : 'N/A'}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 12, color: '#9a8f82', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 6 }}>Reviews</div>
+                  <div style={{ fontSize: 24, fontWeight: 600, color: 'var(--text-h)' }}>
+                    {reviewCount}
+                  </div>
+                </div>
+              </div>
             </div>
-          ))}
+          </div>
         </div>
-      )}
+
+        {/* Right: Reviews Column */}
+        <div className="reviews-column">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+            <h2 className="reviews-heading">Reviews</h2>
+            {isLoggedIn && !showForm && (
+              <button
+                onClick={() => setShowForm(true)}
+                className="add-review-button"
+              >
+                + Add Review
+              </button>
+            )}
+          </div>
+
+          {submitSuccess && (
+            <p className="success-message">Review submitted successfully!</p>
+          )}
+
+          {/* Review form */}
+          {showForm && (
+            <div
+              onClick={() => { setShowForm(false); setSubmitError(null) }}
+              style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1200 }}
+            >
+              <div onClick={(e) => e.stopPropagation()} className="modal-content" role="dialog" aria-modal="true" aria-label="Write a review">
+                <button onClick={() => { setShowForm(false); setSubmitError(null) }} className="modal-close-btn">×</button>
+                <h2 className="modal-title">Write a Review</h2>
+                <p className="modal-subtitle" style={{ marginBottom: 18 }}>Share your experience at this gym.</p>
+
+                <div style={{ marginBottom: '12px' }}>
+                  <label className="form-label">Your name</label>
+                  <input
+                    type="text"
+                    value={formData.author}
+                    onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                    className="form-input"
+                    placeholder="Your name"
+                  />
+                </div>
+
+                <div style={{ marginBottom: '12px' }}>
+                  <label className="form-label">Rating (1–5)</label>
+                  <select
+                    value={formData.rating}
+                    onChange={(e) => setFormData({ ...formData, rating: Number(e.target.value) })}
+                    className="form-input"
+                  >
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <option key={n} value={n}>{n}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div style={{ marginBottom: '16px' }}>
+                  <label className="form-label">Review</label>
+                  <textarea
+                    value={formData.comment}
+                    onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
+                    rows={5}
+                    className="form-input"
+                    placeholder="Share your experience..."
+                    style={{ resize: 'vertical' }}
+                  />
+                </div>
+
+                {submitError && (
+                  <p style={{ color: '#dc3545', fontSize: '14px', marginBottom: '16px' }}>{submitError}</p>
+                )}
+
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button
+                    onClick={handleSubmit}
+                    disabled={submitting}
+                    className="modal-button"
+                    style={{ opacity: submitting ? 0.6 : 1 }}
+                  >
+                    {submitting ? 'Submitting...' : 'Post review'}
+                  </button>
+                  <button
+                    onClick={() => { setShowForm(false); setSubmitError(null) }}
+                    className="cancel-button"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Reviews list */}
+          <div className="reviews-list">
+            {reviewCount === 0 ? (
+              <p style={{ color: '#9a8f82', fontSize: '14px' }}>No reviews yet. Be the first to share your experience!</p>
+            ) : (
+              gym.reviews?.map((review, index) => (
+                <div
+                  key={review.id ?? index}
+                  className="review-item"
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 600, color: 'var(--text-h)', fontSize: 14 }}>{review.author}</span>
+                    <span style={{ fontSize: 14, color: 'var(--accent)', fontWeight: 700 }}>{'★'.repeat(review.rating)}</span>
+                  </div>
+                  <p style={{ fontSize: '14px', color: 'var(--text)', margin: '0 0 8px 0' }}>{review.comment}</p>
+                  <p style={{ fontSize: '12px', color: '#9a8f82', margin: 0 }}>
+                    {new Date(review.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

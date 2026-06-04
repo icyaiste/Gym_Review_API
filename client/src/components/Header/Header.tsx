@@ -1,16 +1,49 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 const Header = () => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'
+  const clientCallbackUrl = import.meta.env.VITE_AUTH0_CALLBACK_URL || 'http://localhost:5173/callback'
+
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        await axios.get(`${backendUrl}/profile`, { withCredentials: true })
+        setIsLoggedIn(true)
+      } catch {
+        setIsLoggedIn(false)
+      }
+    }
+    checkAuth()
+  }, [backendUrl])
+
+  const handleLogin = () => {
+    window.location.assign(`${backendUrl}/login?returnTo=${encodeURIComponent(clientCallbackUrl)}`)
+  }
+
+  const handleLogout = () => {
+    window.location.assign(`${backendUrl}/logout`)
+  }
+
   return (
-    <div style={{ display: 'flex', gap: '20px', padding: '16px', backgroundColor: '#f8f9fa', borderBottom: '1px solid #ddd' }}>
-      <Link to="/" style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '18px' }}>🏋️ Gym Reviews</Link>
-      <div style={{ marginLeft: 'auto', display: 'flex', gap: '20px' }}>
-        <Link to="/" style={{ textDecoration: 'none' }}>Home</Link>
-        <Link to="/profile" style={{ textDecoration: 'none' }}>Profile</Link>
-        <Link to="/login" style={{ textDecoration: 'none' }}>Login</Link>
-      </div>
-    </div>
+    <header className="site-header">
+      <Link to="/" className="brand-link">
+        <span className="brand-dot"></span>
+        Iron rating
+      </Link>
+      <nav className="nav-links">
+        <Link to="/">Home</Link>
+        <Link to="/profile">Profile</Link>
+        {isLoggedIn ? (
+          <button className="nav-auth-button" onClick={handleLogout}>Logout</button>
+        ) : (
+          <button className="nav-auth-button" onClick={handleLogin}>Login</button>
+        )}
+      </nav>
+    </header>
   )
 }
 

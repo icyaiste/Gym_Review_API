@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import RatingBadge from '../RatingBadge/RatingBadge'
 
 type Review = {
   id: string;
@@ -95,12 +96,18 @@ useEffect(() => {
 
   if (loading) return <p>Loading gyms...</p>
   if (loading) return (
-  <div style={{ padding: '20px' }}>
-    <h1>Gym Reviews</h1>
+  <div style={{ padding: '0' }}>
+    <div className="hero" style={{ paddingLeft: 40, paddingRight: 40, marginTop: 24 }}>
+      <h1 className="hero-title">
+        <span className="lead">The gyms of sweden,</span>
+        <span className="accent">rated by those who lift</span>
+      </h1>
+    </div>
     <div style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-      gap: '20px'
+      gap: '20px',
+      margin: '0 40px'
     }}>
       {[1, 2, 3].map((n) => (
         <div key={n} style={{
@@ -134,23 +141,20 @@ useEffect(() => {
   if (error) return <p>Error: {error}</p>
 
   return (
-    <div style={{ padding: '20px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1>Gym Reviews</h1>
+    <div style={{ padding: '0' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px', paddingLeft: 40, paddingRight: 40, marginTop: 24 }}>
+        <div className="hero">
+          <h1 className="hero-title">
+            <span className="lead">The gyms of sweden,</span>
+            <span className="accent">rated by those who lift</span>
+          </h1>
+        </div>
         {isAuthenticated && (
         <button
           onClick={() => setShowModal(true)}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#28a745',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '15px',
-          }}
+          className="button primary"
         >
-          + Add Gym
+          + Add a gym
         </button>
         )}
       </div>
@@ -161,129 +165,92 @@ useEffect(() => {
           onClick={handleCloseModal}
           style={{
             position: 'fixed', inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)',
+            backgroundColor: 'rgba(0,0,0,0.4)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             zIndex: 1000,
           }}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            style={{
-              backgroundColor: 'white',
-              borderRadius: '8px',
-              padding: '32px',
-              width: '100%',
-              maxWidth: '440px',
-              boxShadow: '0 4px 24px rgba(0,0,0,0.2)',
-              }}
+            className="modal-content"
           >
-            <h2 style={{ marginTop: 0, marginBottom: '24px' }}>Add New Gym</h2>
+            <button onClick={handleCloseModal} className="modal-close-btn">×</button>
+            <div style={{ marginBottom: '32px' }}>
+              <h2 className="modal-title">List a new gym</h2>
+              <p className="modal-subtitle">Share a place worth training at.</p>
+            </div>
 
             {formError && (
               <p style={{ color: '#dc3545', marginBottom: '16px', fontSize: '14px' }}>{formError}</p>
             )}
 
-            {(['name', 'city', 'address'] as const).map((field) => (
-              <div key={field} style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', marginBottom: '6px', fontWeight: 500, textTransform: 'capitalize' }}>
-                  {field}{field === 'name' && ' *'}
-                </label>
-                <input
-                  type="text"
-                  value={formData[field]}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, [field]: e.target.value }))}
-                  placeholder={field === 'name' ? 'e.g. Gold\'s Gym' : field === 'city' ? 'e.g. Stockholm' : 'e.g. Main St 1'}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px',
-                    fontSize: '14px',
-                    boxSizing: 'border-box',
-                  }}
-                />
-              </div>
-            ))}
-          
-            <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-              <button
-                onClick={handleAddGym}
-                disabled={submitting}
-                style={{
-                  flex: 1,
-                  padding: '10px',
-                  backgroundColor: submitting ? '#94d3a2' : '#28a745',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: submitting ? 'not-allowed' : 'pointer',
-                  fontSize: '15px',
-                }}
-              >
-                {submitting ? 'Adding...' : 'Add Gym'}
-              </button>
-              <button
-                onClick={handleCloseModal}
-                style={{
-                  flex: 1,
-                  padding: '10px',
-                  backgroundColor: 'white',
-                  color: '#333',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '15px',
-                }}
-              >
-                Cancel
-              </button>
+            <div style={{ marginBottom: '16px' }}>
+              <label className="modal-label">Name</label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                placeholder="Aurum Athletics"
+                className="modal-input"
+              />
             </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label className="modal-label">Address</label>
+              <input
+                type="text"
+                value={formData.address}
+                onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))}
+                placeholder="Strandvägen 12, Stockholm"
+                className="modal-input"
+              />
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <label className="modal-label">Image URL <span style={{ color: '#9a8f82', fontWeight: 400 }}>(optional)</span></label>
+              <input
+                type="text"
+                value={formData.city}
+                onChange={(e) => setFormData((prev) => ({ ...prev, city: e.target.value }))}
+                placeholder="https://..."
+                className="modal-input"
+              />
+            </div>
+          
+            <button
+              onClick={handleAddGym}
+              disabled={submitting}
+              className="modal-button"
+              style={{ opacity: submitting ? 0.6 : 1 }}
+            >
+              {submitting ? 'Adding...' : 'Add gym'}
+            </button>
           </div>
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+      <div className="gym-grid">
         {gyms.map((gym) => {
           const averageRating = getAverageRating(gym)
           const reviewCount = gym.reviews?.length ?? 0
           return (
-            <div
-              key={gym.id}
-              style={{
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                overflow: 'hidden',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-              }}
-            >
+            <div key={gym.id} className="gym-card" style={{ border: '1px solid #ddd', boxShadow: '0 2px 8px rgba(0,0,0,0.06)'}}>
               {gym.image ? (
-                <img src={gym.image} alt={gym.name} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
+                <img src={gym.image} alt={gym.name} />
               ) : (
                 <div style={{ width: '100%', height: '200px', backgroundColor: '#f2f2f2' }} />
               )}
-              <div style={{ padding: '16px' }}>
+              {averageRating !== null && (
+                <RatingBadge rating={averageRating} count={reviewCount} />
+              )}
+              <div className="meta">
                 <h3>{gym.name}</h3>
-                <p style={{ color: '#666', fontSize: '14px' }}>{gym.city || gym.address || 'Location unavailable'}</p>
-                <p style={{ fontSize: '14px' }}>{gym.address || 'No address listed'}</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
-                  <span style={{ fontWeight: 'bold' }}>Gym</span>
-                  <span>{averageRating ? averageRating.toFixed(1) : 'N/A'} ({reviewCount} reviews)</span>
+                <p className="location">{gym.city || gym.address || 'Location unavailable'}</p>
+                <p className="address">{gym.address || 'No address listed'}</p>
+                <div className="card-footer">
+                  <div className="reviews-text">{reviewCount} review{reviewCount === 1 ? '' : 's'}</div>
+                  <button onClick={() => navigate(`/gym/${gym.id}`)} className="details-button">Details</button>
                 </div>
-                <button
-                  onClick={() => navigate(`/gym/${gym.id}`)}
-                  style={{
-                    marginTop: '12px',
-                    padding: '8px 16px',
-                    backgroundColor: '#007bff',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    width: '100%',
-                  }}
-                >
-                  View Details
-                </button>
               </div>
             </div>
           )

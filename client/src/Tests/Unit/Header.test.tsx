@@ -5,13 +5,13 @@ import { BrowserRouter } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 
 describe('Header', () => {
-  it('displays gym reviews title', () => {
+  it('displays brand title', () => {
     render(
       <BrowserRouter>
         <Header />
       </BrowserRouter>
     )
-    expect(screen.getByText(/gym reviews/i)).toBeInTheDocument()
+    expect(screen.getByText(/iron rating/i)).toBeInTheDocument()
   })
 
   it('renders navigation links', () => {
