@@ -260,9 +260,10 @@ For the database we used an in-memory array, which let us focus on testing and a
  
 ---
 # Reflection update after production :
-**Implementation choices**:
+**Implementation choices:**
 For the database I used Prisma with a relational database, which let me focus on testing and authentication rather than database setup. The ORM also helps prevent SQL injection attacks by parameterizing queries.
-**What was challenging**:
+
+**What was challenging:**
 
 Cookies and CORS configuration in production. 
 Getting cookies and CORS to work correctly was trickier than expected, especially when deploying frontend and backend to separate domains. By default, browsers don't send cookies on cross-origin requests so if I set SameSite: Strict, cookies wouldn't work across domains but if I set SameSite: None without Secure (HTTPS), it fails in production.
