@@ -1,48 +1,42 @@
 version: '3.9'
 
 services:
-  db:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: gymreviews
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
-
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     restart: unless-stopped
-    depends_on:
-      - db
+    container_name: gym_review_api-backend
     environment:
       NODE_ENV: development
       PORT: 3000
       DATABASE_URL: ${DATABASE_URL}
-      CLIENT_ORIGIN: http://localhost:5173        
-      AUTH0_SECRET: ${AUTH0_SECRET}       
-      AUTH0_BASE_URL: ${AUTH0_BASE_URL}
+      CLIENT_ORIGIN: http://localhost:5173
+      AUTH0_SECRET: ${AUTH0_SECRET}
+      AUTH0_BASE_URL: http://localhost:3000
       AUTH0_CLIENT_ID: ${AUTH0_CLIENT_ID}
       AUTH0_CLIENT_SECRET: ${AUTH0_CLIENT_SECRET}
       AUTH0_ISSUER_BASE_URL: ${AUTH0_ISSUER_BASE_URL}
     ports:
       - '3000:3000'
+    networks:
+      - gym-network
 
   frontend:
     build:
       context: ./client
       dockerfile: Dockerfile
       args:
-        VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+        VITE_BACKEND_URL: http://localhost:3000
+    restart: unless-stopped
+    container_name: gym_review_api-frontend
     ports:
       - '5173:80'
     depends_on:
       - backend
+    networks:
+      - gym-network
 
-volumes:
-  db_data:
+networks:
+  gym-network:
+    driver: bridge
