@@ -2,28 +2,14 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import RatingBadge from '../RatingBadge/RatingBadge'
-
-type Review = {
-  id: string;
-  author: string;
-  rating: number;
-  comment: string;
-  createdAt: string;
-}
-
-type Gym = {
-  id: string
-  name: string
-  city?: string
-  address?: string
-  image?: string
-  reviews?: Review[]
-}
+import type { Gym } from '../../types/gym'
 
 type NewGymForm = {
   name: string
   city: string
   address: string
+  image : string
+  description: string
 }
 
 const Home = () => {
@@ -33,7 +19,7 @@ const Home = () => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [showModal, setShowModal] = useState<boolean>(false)
-  const [formData, setFormData] = useState<NewGymForm>({ name: '', city: '', address: '' })
+  const [formData, setFormData] = useState<NewGymForm>({ name: '', city: '', address: '', image: '', description: '' })
   const [submitting, setSubmitting] = useState<boolean>(false)
   const [formError, setFormError] = useState<string | null>(null)
 
@@ -68,6 +54,7 @@ useEffect(() => {
   }, [backendUrl])
 
   const handleAddGym = async () => {
+    console.log('formData before submit:', formData)
     if (!formData.name.trim()) {
       setFormError('Gym name is required.')
       return
@@ -77,9 +64,10 @@ useEffect(() => {
     try {
       const response = await axios.post(`${backendUrl}/gyms`, formData,
        { withCredentials: true })
+      console.log('Created gym response:', response.data)
       setGyms((prev) => [...prev, response.data])
       setShowModal(false)
-      setFormData({ name: '', city: '', address: '' })
+      setFormData({ name: '', city: '', address: '', image: '', description: '' })
     } catch (err: any) {
       setFormError(err.response?.data?.message ?? err.message)
     } finally {
@@ -89,7 +77,7 @@ useEffect(() => {
 
   const handleCloseModal = () => {
     setShowModal(false)
-    setFormData({ name: '', city: '', address: '' })
+    setFormData({ name: '', city: '', address: '', image: '', description: '' })
     setFormError(null)
   }
 
@@ -196,6 +184,17 @@ useEffect(() => {
             </div>
 
             <div style={{ marginBottom: '16px' }}>
+  <label className="modal-label">City</label>
+  <input
+    type="text"
+    value={formData.city}
+    onChange={(e) => setFormData((prev) => ({ ...prev, city: e.target.value }))}
+    placeholder="Göteborg"
+    className="modal-input"
+  />
+</div>
+
+            <div style={{ marginBottom: '16px' }}>
               <label className="modal-label">Address</label>
               <input
                 type="text"
@@ -206,17 +205,52 @@ useEffect(() => {
               />
             </div>
 
-            <div style={{ marginBottom: '24px' }}>
-              <label className="modal-label">Image URL <span style={{ color: '#9a8f82', fontWeight: 400 }}>(optional)</span></label>
-              <input
-                type="text"
-                value={formData.city}
-                onChange={(e) => setFormData((prev) => ({ ...prev, city: e.target.value }))}
-                placeholder="https://..."
-                className="modal-input"
-              />
-            </div>
-          
+            {/* Image URL field */}
+<div style={{ marginBottom: '20px' }}>
+  <label style={{
+    display: 'block', marginBottom: '8px',
+    fontWeight: 600, fontSize: '14px', color: '#1a1a1a', letterSpacing: '0.3px'
+  }}>
+    Image URL
+  </label>
+  <input
+    type="text"
+    value={formData.image}
+    onChange={(e) => setFormData((prev) => ({ ...prev, image: e.target.value }))}
+    placeholder="e.g. https://example.com/gym-photo.jpg"
+    style={{
+      width: '100%', padding: '12px 16px',
+      border: '1.5px solid #e0e0e0', borderRadius: '8px',
+      fontSize: '14px', boxSizing: 'border-box',
+    }}
+    onFocus={(e) => e.currentTarget.style.borderColor = '#d4af37'}
+    onBlur={(e) => e.currentTarget.style.borderColor = '#e0e0e0'}
+  />
+</div>
+
+{/* Description field */}
+  <div style={{ marginBottom: '20px' }}>
+  <label style={{
+    display: 'block', marginBottom: '8px',
+    fontWeight: 600, fontSize: '14px', color: '#1a1a1a', letterSpacing: '0.3px'
+  }}>
+    Description
+  </label>
+  <textarea
+    value={formData.description}
+    onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+    placeholder="e.g. A well-equipped powerlifting gym in central Stockholm."
+    rows={3}
+    style={{
+      width: '100%', padding: '12px 16px',
+      border: '1.5px solid #e0e0e0', borderRadius: '8px',
+      fontSize: '14px', boxSizing: 'border-box',
+      resize: 'vertical', fontFamily: 'inherit',
+    }}
+    onFocus={(e) => e.currentTarget.style.borderColor = '#d4af37'}
+    onBlur={(e) => e.currentTarget.style.borderColor = '#e0e0e0'}
+  />
+</div>
             <button
               onClick={handleAddGym}
               disabled={submitting}
@@ -235,11 +269,15 @@ useEffect(() => {
           const reviewCount = gym.reviews?.length ?? 0
           return (
             <div key={gym.id} className="gym-card" style={{ border: '1px solid #ddd', boxShadow: '0 2px 8px rgba(0,0,0,0.06)'}}>
-              {gym.image ? (
-                <img src={gym.image} alt={gym.name} />
-              ) : (
-                <div style={{ width: '100%', height: '200px', backgroundColor: '#f2f2f2' }} />
-              )}
+             {gym.image ? (
+              <img
+                src={gym.image}
+                alt={gym.name}
+                style={{ width: '100%', height: '200px', objectFit: 'cover', display: 'block' }}
+            />
+          ) : (
+            <div style={{ width: '100%', height: '200px', backgroundColor: '#f2f2f2' }} />
+            )}
               {averageRating !== null && (
                 <RatingBadge rating={averageRating} count={reviewCount} />
               )}

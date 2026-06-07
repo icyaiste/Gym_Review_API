@@ -1,24 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-
-type Review = {
-  id: string
-  author: string
-  rating: number
-  comment: string
-  createdAt: string
-}
-
-type Gym = {
-  id: string
-  name: string
-  city?: string
-  address?: string
-  image?: string
-  description?: string
-  reviews?: Review[]
-}
+import type { Gym, Review } from '../../types/gym'
 
 function Gym() {
   const { id } = useParams<{ id: string }>()
@@ -39,6 +22,17 @@ function Gym() {
   const [submitting, setSubmitting] = useState<boolean>(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false)
+
+  const [showEditForm, setShowEditForm] = useState<boolean>(false)
+const [editData, setEditData] = useState<Pick<Gym, 'name' | 'city' | 'address' | 'image' | 'description'>>({
+  name: '',
+  city: '',
+  address: '',
+  image: '',
+  description: '',
+})
+const [editSubmitting, setEditSubmitting] = useState<boolean>(false)
+const [editError, setEditError] = useState<string | null>(null)
 
 
   const getAverageRating = (gym: Gym) => {
@@ -106,6 +100,32 @@ function Gym() {
       setSubmitting(false)
     }
   }
+
+  const handleEdit = async () => {
+  if (!editData.name?.trim()) {
+    setEditError('Gym name is required.')
+    return
+  }
+  setEditSubmitting(true)
+  setEditError(null)
+  try {
+    const response = await axios.patch(
+      `${backendUrl}/gyms/${id}`,
+      editData,
+      { withCredentials: true }
+    )
+    setGym(response.data)
+    setShowEditForm(false)
+  } catch (err: any) {
+    if (err.response?.status === 401) {
+      setEditError('You must be logged in to edit this gym.')
+    } else {
+      setEditError('Something went wrong. Please try again.')
+    }
+  } finally {
+    setEditSubmitting(false)
+  }
+}
 
   if (loading) return (
   <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
@@ -219,6 +239,7 @@ function Gym() {
         <div className="reviews-column">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
             <h2 className="reviews-heading">Reviews</h2>
+            <div style={{ display: 'flex', gap: '12px' }}>
             {isLoggedIn && !showForm && (
               <button
                 onClick={() => setShowForm(true)}
@@ -227,7 +248,26 @@ function Gym() {
                 + Add Review
               </button>
             )}
+            {isLoggedIn && (
+              <button
+                onClick={() => {
+                  setEditData({
+                  name: gym.name,
+                  city: gym.city ?? '',
+                  address: gym.address ?? '',
+                  image: gym.image ?? '',
+                  description: gym.description ?? '',
+            })
+              setShowEditForm(true)
+            }}
+              className="add-review-button"
+  >
+    ✎ Edit gym
+  </button>
+)}
+</div>
           </div>
+          
 
           {submitSuccess && (
             <p className="success-message">Review submitted successfully!</p>
@@ -303,6 +343,86 @@ function Gym() {
               </div>
             </div>
           )}
+          {showEditForm && (
+  <div
+    onClick={() => { setShowEditForm(false); setEditError(null) }}
+    style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1200 }}
+  >
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className="modal-content"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Edit gym"
+    >
+      <button
+        onClick={() => { setShowEditForm(false); setEditError(null) }}
+        className="modal-close-btn"
+      >
+        ×
+      </button>
+      <h2 className="modal-title">Edit Gym</h2>
+      <p className="modal-subtitle" style={{ marginBottom: 18 }}>Update the gym's information.</p>
+
+      {editError && (
+        <p style={{ color: '#dc3545', fontSize: '14px', marginBottom: '16px' }}>{editError}</p>
+      )}
+
+      {(['name', 'city', 'address'] as const).map((field) => (
+        <div key={field} style={{ marginBottom: '12px' }}>
+          <label className="form-label" style={{ textTransform: 'capitalize' }}>{field}</label>
+          <input
+            type="text"
+            value={editData[field]}
+            onChange={(e) => setEditData({ ...editData, [field]: e.target.value })}
+            className="form-input"
+            placeholder={field}
+          />
+        </div>
+      ))}
+
+      <div style={{ marginBottom: '12px' }}>
+        <label className="form-label">Image URL</label>
+        <input
+          type="text"
+          value={editData.image ?? ''}
+          onChange={(e) => setEditData({ ...editData, image: e.target.value })}
+          className="form-input"
+          placeholder="https://example.com/photo.jpg"
+        />
+      </div>
+
+      <div style={{ marginBottom: '16px' }}>
+        <label className="form-label">Description</label>
+        <textarea
+          value={editData.description ?? ''}
+          onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+          rows={4}
+          className="form-input"
+          placeholder="Describe the gym..."
+          style={{ resize: 'vertical' }}
+        />
+      </div>
+
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <button
+          onClick={handleEdit}
+          disabled={editSubmitting}
+          className="modal-button"
+          style={{ opacity: editSubmitting ? 0.6 : 1 }}
+        >
+          {editSubmitting ? 'Saving...' : 'Save changes'}
+        </button>
+        <button
+          onClick={() => { setShowEditForm(false); setEditError(null) }}
+          className="cancel-button"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
           {/* Reviews list */}
           <div className="reviews-list">

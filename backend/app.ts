@@ -62,15 +62,19 @@ app.get('/me', (req, res) => {
   res.json({ isAuthenticated: req.oidc.isAuthenticated() })
 })
 
+
 app.post('/gyms', requireAuth, async (req, res) => {
+  console.log('req.body:', req.body)
   try {
-    const { name, city, address } = req.body
+    const { name, city, address, description, image } = req.body
+    console.log('image value:', image)
     const newGym = await prisma.gym.create({
-      data: { name, city, address },
+      data: { name, city, address, description, image },
       include: { reviews: true }
     })
     res.status(201).json(newGym)
   } catch (error) {
+    console.log('ERROR:', error)
     res.status(500).json({ message: 'Error adding gym' })
   }
 })
@@ -114,6 +118,20 @@ app.post('/gyms/:id/reviews', requireAuth, async (req, res) => {
     res.status(201).json(newReview)
   } catch (error) {
     res.status(500).json({ message: 'Error adding review' })
+  }
+})
+
+app.patch('/gyms/:id', requireAuth, async (req, res) => {
+  try {
+    const { name, city, address, image, description } = req.body
+    const updatedGym = await prisma.gym.update({
+      where: { id: req.params.id },
+      data: { name, city, address, image, description },
+      include: { reviews: true }
+    })
+    res.json(updatedGym)
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating gym' })
   }
 })
 
