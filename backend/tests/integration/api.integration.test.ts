@@ -1,19 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { AddressInfo } from 'node:net'
 import {app} from '../../app'
-
-vi.mock('../prisma/client', () => ({
-  default: {
-    gym: {
-      findMany: vi.fn().mockResolvedValue([]),
-      findUnique: vi.fn().mockResolvedValue(null),
-      create: vi.fn(),
-    },
-    review: {
-      create: vi.fn(),
-    },
-  },
-}))
+import prisma from '../../src/database/db'
 
 describe('API integration', () => {
   let server: ReturnType<typeof app.listen>
@@ -70,33 +58,36 @@ afterEach(async () => {
   })
 
   it('POST /gyms with a valid token returns 201 and persists the gym', async () => {
-    const createResponse = await fetch(`${baseUrl}/gyms`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer test-token',
-      },
-      body: JSON.stringify({
-        name: 'Integration Gym',
-        city: 'Malmö',
-        address: 'Integration Street 10',
-      }),
-    })
-
-    expect(createResponse.status).toBe(201)
-    const createdGym = await createResponse.json()
-    expect(createdGym.name).toBe('Integration Gym')
-
-    const fetchResponse = await fetch(`${baseUrl}/gyms/${createdGym.id}`)
-    expect(fetchResponse.status).toBe(200)
-    const fetchedGym = await fetchResponse.json()
-    expect(fetchedGym).toMatchObject({
-      id: createdGym.id,
+  const createResponse = await fetch(`${baseUrl}/gyms`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer test-token',
+    },
+    body: JSON.stringify({
       name: 'Integration Gym',
       city: 'Malmö',
       address: 'Integration Street 10',
-    })
+    }),
   })
+
+  expect(createResponse.status).toBe(201)
+  const createdGym = await createResponse.json()
+  expect(createdGym.name).toBe('Integration Gym')
+
+  const fetchResponse = await fetch(`${baseUrl}/gyms/${createdGym.id}`)
+  expect(fetchResponse.status).toBe(200)
+  const fetchedGym = await fetchResponse.json()
+  expect(fetchedGym).toMatchObject({
+    id: createdGym.id,
+    name: 'Integration Gym',
+    city: 'Malmö',
+    address: 'Integration Street 10',
+  })
+
+  // cleanup — delete the test gym so it doesn't end up in production
+  await prisma.gym.delete({ where: { id: createdGym.id } })
+})
 
   it('POST /gyms/:id/reviews without a token returns 401', async () => {
     const response = await fetch(`${baseUrl}/gyms/gym-001/reviews`, {
@@ -140,5 +131,8 @@ afterEach(async () => {
     expect(gymResponse.status).toBe(200)
     const gym = await gymResponse.json()
     expect(gym.reviews.some((review: { id: string }) => review.id === createdReview.id)).toBe(true)
+
+    // cleanup
+  await prisma.review.delete({ where: { id: createdReview.id } })
   })
 })
