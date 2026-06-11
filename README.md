@@ -7,10 +7,9 @@ This repository contains a backend API and a React client for reviewing gyms. Th
 
 ## Quick Start
 
-- **Deployed URLs** (when available):
+- **Deployed URLs** :
   - Frontend: `https://gym-review-api.vercel.app` 
   - Backend API: `https://gym-review-api.onrender.com`
-  - *(Update these URLs in `VITE_BACKEND_URL` and `CLIENT_ORIGIN` after deployment)*
 
 ## Setup
 
@@ -172,7 +171,7 @@ Make sure you have [Docker Desktop](https://www.docker.com/products/docker-deskt
 
 	- The client uses the callback URL from the Auth0 configuration (`VITE_AUTH0_CALLBACK_URL`) to complete the login flow and then the server-side session cookie is used to authenticate API requests.
 
-## Security Decisions (Checklist)
+## Security Decisions 
 
 Below is a list of common security checklist items and an explanation of what the project does and why.
 
