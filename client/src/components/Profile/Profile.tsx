@@ -34,7 +34,6 @@ const handleLogout = () => {
     window.location.href = `http://localhost:3000/logout`
   }
 
-
   if (loading) {
     return (
       <div style={{ padding: '100px 40px', maxWidth: '600px', margin: '0 auto' }}>

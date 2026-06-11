@@ -47,7 +47,7 @@ const [editError, setEditError] = useState<string | null>(null)
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        await axios.get(`${backendUrl}/profile`, { withCredentials: true })
+        await axios.get(`${backendUrl}/me`, { withCredentials: true })
         setIsLoggedIn(true)
       } catch {
         setIsLoggedIn(false)
